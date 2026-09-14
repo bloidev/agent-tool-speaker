@@ -38,7 +38,10 @@ class TestSpeakEndpoint:
     @patch('sounddevice.wait')
     def test_speak_success(self, mock_wait, mock_play, mock_sf_read, mock_voice):
         """Verifica que /speak genera audio exitosamente"""
-        mock_voice.synthesize.return_value = None
+        audio_chunk = MagicMock()
+        audio_chunk.audio_int16_bytes = b'\x00\x01\x02\x03'
+        audio_chunk.sample_rate = 22050
+        mock_voice.synthesize.return_value = [audio_chunk]
         mock_sf_read.return_value = (np.array([0.1, 0.2, 0.3]), 22050)
 
         response = client.post("/speak", json={"text": "Hola"})
@@ -69,7 +72,10 @@ class TestSpeakEndpoint:
     @patch('sounddevice.wait')
     def test_speak_spanish_text(self, mock_wait, mock_play, mock_sf_read, mock_voice):
         """Verifica que /speak maneja correctamente texto en español"""
-        mock_voice.synthesize.return_value = None
+        audio_chunk = MagicMock()
+        audio_chunk.audio_int16_bytes = b'\x00\x01\x02\x03'
+        audio_chunk.sample_rate = 22050
+        mock_voice.synthesize.return_value = [audio_chunk]
         mock_sf_read.return_value = (np.array([0.1, 0.2]), 22050)
 
         response = client.post("/speak", json={"text": "¡Hola! ¿Cómo estás?"})
